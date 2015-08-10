@@ -1,0 +1,14 @@
+29-Jan-2015 G.Macharashvili Dubna
+
+1. "VertexGeneratorO" 
+                      - gauss (x,y,z) distribution or fixed (0,0,0)
+                      - sx, sy, sz - beam sigma ...
+
+2. "VertexGeneratorA" 
+                      - with parabolic beam profile
+                      - sx, sy, sz - total beam widths ...
+
+3. "VertexGeneratorU" - 
+                      - flat (x,y,z) distribution or fixed (0,0,0)
+                      - sx, sy, sz - total beam widths ...
+

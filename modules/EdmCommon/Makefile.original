@@ -1,0 +1,53 @@
+# Date:		19-Jun-2015 G.Macharashvili Juelich
+# Edm common classes ...
+
+MODULES = GG4ModuleEventAction
+MODULES+= GG4ModuleSD
+MODULES+= GG4ModuleHit
+MODULES+= GG4PhiFitter
+MODULES+= UDynamicManager
+MODULES+= UArrow
+MODULES+= Ruller
+MODULES+= EdmFourBlockCalorimeter
+MODULES+= EdmModularCalorimeter
+MODULES+= EdmModularCalorimeterAnalysis
+
+LIB_NAME = EdmCommon
+LIB_DIR  = ${HOME}/lib
+LIBNAME  = $(LIB_DIR)/lib$(LIB_NAME).so
+
+## IMPORTANT: add option "-m64" for 64-bit cpu' ...
+CPPFLAGS= -pthread -I. -I${HOME}/include `geant4-config --cflags` `root-config --cflags` 
+
+CXXFLAGS= -g -O2 -fPIC -fno-strict-aliasing -Wall -Wunused-parameter 
+
+LDFLAGS = -L${HOME}/lib -lConfiguration `geant4-config --libs` `root-config --glibs`
+
+
+.PHONY: all lib include clean
+
+all:	include lib
+	@echo -e "\033[31m"   lib${LIB_NAME}.so ... ok "\033[0m"
+
+lib:	$(LIBNAME)
+$(LIBNAME): $(addsuffix .o,$(MODULES)) 
+	@echo "Linking shared library $@ ..."
+	@echo ${CXXFLAGS}
+	@echo ${LDFLAGS}
+	$(CXX) -v $(CXXFLAGS) $(LDFLAGS) -shared $^ -o $@
+
+include: $(addprefix $(HOME)/include/,$(addsuffix .hh,$(MODULES))) 
+
+%.o: %.cc
+	@if [ -f $< ] ; then echo "Compiling $< ..." ; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ ; fi ;
+
+$(HOME)/include/%.hh: %.hh
+	@echo "Copying $< to $(HOME)/include ..."
+	@-cp $< $(HOME)/include/$(notdir $@)
+
+clean:
+	@-rm $(addprefix $(HOME)/include/,$(addsuffix .hh,$(MODULES)))
+	@-rm *.o *\~
+	@-rm $(LIBNAME)
+
+# e-o-f

@@ -1,0 +1,93 @@
+# 12-Mar-2015
+# event generator
+# ===============
+
+# particle ...
+
+particle_name:       deuteron    [default: deuteron]
+kinetic_energy:      270.0   [MeV]
+theta_limits:		6.0   17.0   [deg]
+
+
+# vertex generators ...
+# =================
+vertex_generator_lib:       /home/gogi/lib/libVertexGenerators.so
+
+# vertex_generator_class:     VertexGeneratorO          [uniform]
+vertex_generator_class:     VertexGeneratorA          [parabolic]
+vertex_variation:           5.0   5.0   12.0  [mm]
+
+# interaction generator ...
+# =====================
+interaction_generator_lib:       /home/gogi/lib/libInteractionGenerators.so
+
+# interaction_generator_class:     UniformThetaGenerator
+interaction_generator_class:     InteractionElasticF
+# interaction_generator_class:     InteractionInelasticF
+
+
+
+
+
+# number of events to generate ...
+# ============================
+gen_events:               500000
+
+# generated asymmetry P*Ay and the beam spin orientation ...
+# ======================================================
+asymmetry_PA:               0.005
+beam_polarization_phi:      0.0    [deg]   # the angle is defined with respect to y-axis directed upwards ...
+
+# detectors ...
+# =========
+
+G4Box.crystal       15.0  15.0  100.0    [mm]
+
+# calorimeter ...
+
+cal.min_radius:        60.0   [mm]
+cal.max_radius        220.0   [mm]
+cal.distance.z        600.0   [mm]
+
+# COSY vacuum window ...
+# G4Tubs.cosy_window     50.0 200.0  0.5   0 360
+
+# scintillator counters (wedge shaped) in front of cal ...
+# G4Tubs.phi_scint       50.0 200.0  10.0   0 360
+
+
+ruller:			off        [default: off]
+
+#########################################
+# homogenus detector ...
+# G4Tubs.HomogenusDetector       50.0  200.0  100.0   0 360
+# HomogenusDetector.material     LYSO scintillator
+# HomogenusDetector.frontZpos    600.0 
+#########################################
+
+
+######################################### heterogenus detector ...
+#                                          Rmin         Rmax  thikness   [mm]
+# G4Tubs.HeterogenusDetectorAbsorber         50.0  200.0       2.0    0 360
+# G4Tubs.HeterogenusDetectorSensitive        50.0  200.0      10.0    0 360  
+# HeterogenusDetector.absorberMaterial       Tungsten
+# HeterogenusDetector.sensitiveMaterial      Scintillator
+# HeterogenusDetector.frontZpos              600.0        [mm]
+# HeterogenusDetector.numberOfPairs          4
+#########################################
+
+######################################### X2_Detector detector ...
+X.vacuumWindowZPosition          380.0 [mm]
+X.vacuumWindowThickness            0.5 [mm]
+X.vacuumWindowMaterial           G4_STAINLESS-STEEL
+#                                          Rmin   Rmax  thikness   [mm]
+G4Tubs.X.absorber                          50.0  250.0       1.0    0 360
+G4Tubs.X.sensitive                         50.0  250.0      10.0    0 360
+G4Tubs.X.calorimeter                       50.0  250.0     100.0    0 360  
+X.absorberMaterial                         Tungsten
+X.sensitiveMaterial                        G4_PLASTIC_SC_VINYLTOLUENE
+X.calorimeterMaterial                      LYSO                 default LYSO
+X.distance.z                               400.0        [mm]    default 400.0
+#########################################
+
+# e-o-f

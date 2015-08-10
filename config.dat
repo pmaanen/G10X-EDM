@@ -1,0 +1,72 @@
+# 12-Mar-2015
+# event generator
+# ===============
+
+# number of events to generate ...
+# ============================
+gen_events:               1000000
+
+# generated asymmetry P*Ay and the beam spin orientation ...
+# ======================================================
+beam_polarization:          0.01
+beam_polarization_phi:      0.0    [deg]   # the angle is defined with respect to y-axis directed upwards ...
+average_analyzing_power:    0.5            # [default == 0] if defined nonzero it is used. otherwise expAy270(theta) is used ...      
+
+# particle ...
+# ========
+particle_name:     deuteron   [default: deuteron]
+kinetic_energy:       270.0   [MeV]
+theta_limits:		4.0   22.0   [deg]  default 4 < theta < 22 - to estimate bkg ...
+
+
+# vertex generators ...
+# =================
+vertex_generator_lib:       /home/gogi/lib/libVertexGenerators.so
+
+# vertex_generator_class:     VertexGeneratorO          [uniform]
+vertex_generator_class:     VertexGeneratorA          [parabolic]
+vertex_variation:           4.0   4.0   10.0  [mm]
+
+# interaction generator ...
+# =====================
+interaction_generator_lib:       /home/gogi/lib/libInteractionGenerators.so
+
+# interaction_generator_class:     UniformThetaGenerator
+# interaction_generator_class:     InteractionElasticF
+interaction_generator_class:     InteractionInelasticF
+
+
+# detectors ...
+# =========
+
+# calorimeter ...
+
+# cal.min_radius:        60.0   [mm]
+# cal.max_radius        220.0   [mm]
+# cal.distance.z        600.0   [mm]
+
+
+ruller:			off        [default: off]
+
+######################################### X2_Detector detector ...
+X.vacuumWindow                      on [default: off]
+X.vacuumWindowZPosition          380.0 [mm]
+X.vacuumWindowThickness            0.5 [mm]
+X.vacuumWindowMaterial             G4_STAINLESS-STEEL
+
+#                                          Rmin   Rmax  thikness   [mm]
+#G4Tubs.X.absorber                          50.0  200.0       1.0    0 360
+X.absorberMaterial                         Tungsten
+
+G4Tubs.X.sensitive                         50.0  200.0      10.0    0 360
+X.sensitiveMaterial                        G4_PLASTIC_SC_VINYLTOLUENE
+
+# G4Tubs.X.calorimeter         50.0  200.0     100.0    0 360  
+FBcalorimeter          on 
+X.calorimeterMaterial          LYSO                 default LYSO
+G4Box.crystal                  15.0  15.0  100.0    [mm]
+
+X.distance.z                   400.0        [mm]    default 400.0
+#########################################
+
+# e-o-f

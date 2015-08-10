@@ -1,0 +1,76 @@
+# File:		Makefile
+# Date:		08-Apr-2015 G.Macharashvili Dubna
+
+# Important:
+#   'libEdmGeantTEvent.so' does not require any class of Geant4
+#   It can be used for root-file access to extract events 
+#   as well as to write events from Geant4 framework.
+
+# Classes:
+#   EdmGeantTEvent
+#   EdmGeantTPTrack
+#   EdmGeantTHit
+
+LIB_NAME  = EdmGeantTEvent
+
+DICTNAME = $(LIB_NAME)Dict
+LINKNAME = $(LIB_NAME)LinkDef.hh
+
+MODULES = EdmGeantTEvent EdmGeantParticleDB 
+
+LIBDIR  = ${HOME}/lib
+BINDIR  = ${HOME}/bin
+
+#CPPFLAGS= -pthread -I. -I${HOME}/include 
+
+CXXFLAGS = -g -O2 -fPIC -fno-strict-aliasing -Wall 
+CXXFLAGS += `root-config --cflags` 
+
+LDFLAGS += `root-config --libs`
+
+LIBNAME  = $(LIBDIR)/lib$(LIB_NAME).so
+.PHONY: all lib include clean
+
+all:	include lib
+	@echo -e "\033[31m"   lib${LIB_NAME}.so ... ok "\033[0m"
+	
+$(DICTNAME).cc: $(addsuffix .hh,$(MODULES)) $(LINKNAME)
+	@echo "  generating one dictionary for all classes: $@"
+	@/usr/local/root/bin/rootcint -f $@ -c $(CXXFLAGS) -p $^
+
+lib:	$(LIBNAME)
+$(LIBNAME): $(addsuffix .o,$(MODULES)) $(addsuffix .o,$(DICTNAME)) 
+ifdef CPPVERBOSE
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $^ -o $@
+else
+	@echo "  linking shared library with dictionary $@ ..."
+	@$(CXX) -fPIC $(CXXFLAGS) $(LDFLAGS) -shared $^ -o $@
+endif
+
+include: $(addprefix $(HOME)/include/,$(addsuffix .hh,$(MODULES))) 
+
+%.o: %.cc
+ifdef CPPVERBOSE 
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+else
+	@if [ -f $< ] ; then echo "  compiling $< ..." ; $(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@ ; fi ;
+endif
+
+%.so: %.cc
+	$(CXX) -fPIC -O2 -shared $(CXXFLAGS) -o $@
+
+$(HOME)/include/%.hh: %.hh
+ifdef CPPVERBOSE
+	-cp $< $(HOME)/include/$(notdir $@)
+else
+	@echo "  copying $< to $(HOME)/include ..."
+	@-cp $< $(HOME)/include/$(notdir $@)
+endif
+
+clean: 
+	@-rm $(addprefix $(HOME)/include/,$(addsuffix .hh,$(MODULES)))
+	@-rm *.o *\~
+	@-rm $(DICTNAME)*
+	@-rm $(LIBNAME)
+
+# eof
